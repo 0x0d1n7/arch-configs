@@ -55,6 +55,18 @@ declare -a programs=(
 # Array to store programs that are not available
 declare -a not_available=()
 
+# Function to enable the BlackArch repository
+enable_blackarch_repo() {
+  if ! grep -q "[blackarch]" /etc/pacman.conf; then
+    echo -e "\n[blackarch]\nServer = https://blackarch.org/strap.sh\nSigLevel = Optional TrustAll" | sudo tee -a /etc/pacman.conf > /dev/null
+    sudo pacman -Syy
+    curl -O https://blackarch.org/strap.sh
+    chmod +x strap.sh
+    sudo ./strap.sh
+    rm strap.sh
+  fi
+}
+
 # Function to install programs using Pacman or Yay
 install_programs() {
   for program in "${programs[@]}"; do
@@ -68,6 +80,9 @@ install_programs() {
     fi
   done
 }
+
+# Enable BlackArch repository
+enable_blackarch_repo
 
 # Remove duplicate program names from the array
 programs=($(echo "${programs[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
