@@ -1,0 +1,75 @@
+---
+- name: Install programs and enable BlackArch repository
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Enable BlackArch repository
+      block:
+        - lineinfile:
+            dest: /etc/pacman.conf
+            regexp: "^\\[blackarch\\]"
+            line: "[blackarch]"
+            insertafter: EOF
+          notify: Refresh Pacman cache
+        - pacman_key:
+            id: 4345771566D76038C7FEB43863EC0ADBEA87E4E3
+            state: present
+        - pacman:
+            name: blackarch-keyring
+            state: present
+          notify: Refresh Pacman cache
+      when: "'[blackarch]' not in (ansible_file_contents['/etc/pacman.conf'] | join('') | splitlines())"
+
+    - name: Install programs
+      pacman:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - gobuster
+        - shellter
+        - fluxion
+        - airgeddon
+        - beef
+        - burpsuite
+        - dhcpig
+        - chntpw
+        - whatweb
+        - macchanger
+        - netcat
+        - bettercap
+        - recon-ng
+        - netdiscover
+        - ffuf
+        - wifiphisher
+        - sqlmap
+        - metasploit
+        - wireshark
+        - shellter
+        - evillimiter
+        - netTool
+        - httrack
+        - speedtest
+        - speedtest-cli
+        - mariadb
+        - mysql
+        - macchanger
+        - mbpfan
+        - hollywood
+        - cowsay
+        - nmap
+        - openvas
+        - nikto
+        - dirb
+        - enum4linux
+        - john
+        - hydra
+        - hashcat
+        - sqlninja
+        - yersinia
+        - arp-scan
+        - dnsenum
+        - fimap
+        - wpscan
+        - mitmproxy
+        - snort
+        - lynis
